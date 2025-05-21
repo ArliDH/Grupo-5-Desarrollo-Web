@@ -43,6 +43,33 @@ switch ($accion) {
         echo json_encode(['success' => true]);
         break;
 
+    case 'eliminar':
+        $id = $_GET['id'] ?? '';
+        $stmt = $con->prepare("UPDATE usuarios SET estado='eliminado' WHERE id=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        echo json_encode(['success' => true]);
+        break;
+
+    case 'actualizar':
+        $data = json_decode(file_get_contents("php://input"));
+        $id = $data->id ?? '';
+        $email = $data->email ?? '';
+        $password = $data->password ?? '';
+        $rol = $data->rol ?? '';
+
+        if (!$id || !$email || !$password || !$rol) {
+            echo json_encode(['success' => false, 'mensaje' => 'Datos incompletos']);
+            exit;
+        }
+
+        $stmt = $con->prepare("UPDATE usuarios SET email=?, password=?, rol=? WHERE id=?");
+        $stmt->bind_param("sssi", $email, $password, $rol, $id);
+        $stmt->execute();
+
+        echo json_encode(['success' => true]);
+        break;
+
     default:
         echo json_encode(['success' => false, 'mensaje' => 'Acción no válida']);
         break;
