@@ -15,6 +15,6 @@ if(mysqli_connect_errno()){
     die("Se produjo un error ".mysqli_connect_error());
 }
 else{
-    echo "Conexión exitosa a la base de datos.";
+    //echo "Conexión exitosa a la base de datos.";
 }
 ?>

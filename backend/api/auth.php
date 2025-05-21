@@ -2,16 +2,17 @@
 session_start();
 require_once '../db/conexion.php';
 
-// Recibe los datos del login por POST (JSON)
 $data = json_decode(file_get_contents("php://input"));
 
 $email = $data->email ?? '';
 $password = $data->password ?? '';
 
 if ($email && $password) {
-    $stmt = $pdo->prepare("SELECT id, email, rol FROM usuarios WHERE email=? AND password=? AND estado='activo'");
-    $stmt->execute([$email, $password]);
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $con->prepare("SELECT id, email, rol FROM usuarios WHERE email=? AND password=? AND estado='activo'");
+    $stmt->bind_param("ss", $email, $password);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $usuario = $result->fetch_assoc();
 
     if ($usuario) {
         $_SESSION['usuario'] = $usuario;
