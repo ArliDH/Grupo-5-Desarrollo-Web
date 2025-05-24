@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,85 +6,124 @@
     <title>Document</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Times New Roman', serif;
             margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
+            padding: 30px;
+            background-color: #2c3e50;
+            min-height: 100vh;
         }
         
         .contenedor-principal {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 3px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid #e8e8e8;
+            border-top: 6px solid #1a252f;
         }
         
         .titulo-principal {
-            color: #333;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
+            color: #1a252f;
+            border-bottom: 3px solid #1a252f;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 1px;
         }
         
         .grupo-botones {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             display: flex;
-            gap: 10px;
+            gap: 15px;
             flex-wrap: wrap;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e8e8e8;
         }
         
         .boton {
-            padding: 8px 16px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 4px;
+            border-radius: 2px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-family: 'Arial', sans-serif;
+            transition: all 0.2s ease;
         }
         
         .boton-activo {
-            background-color: #0056b3;
-            color: white;
+            background-color: #1a252f;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(26, 37, 47, 0.3);
         }
         
         .boton-inactivo {
             background-color: #6c757d;
-            color: white;
+            color: #ffffff;
+        }
+        
+        .boton-inactivo:hover {
+            background-color: #5a6268;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
         
         .boton-accion {
-            background-color: #28a745;
-            color: white;
+            background-color: #27ae60;
+            color: #ffffff;
+        }
+        
+        .boton-accion:hover {
+            background-color: #229954;
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
         }
         
         .boton-peligro {
-            background-color: #dc3545;
-            color: white;
+            background-color: #c0392b;
+            color: #ffffff;
+        }
+        
+        .boton-peligro:hover {
+            background-color: #a93226;
+            box-shadow: 0 2px 8px rgba(192, 57, 43, 0.3);
         }
         
         .tabla-correos {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 25px;
+            background-color: #ffffff;
+            border: 1px solid #e8e8e8;
         }
         
         .tabla-correos th, .tabla-correos td {
-            padding: 12px 15px;
+            padding: 18px 20px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #e8e8e8;
+            font-family: 'Arial', sans-serif;
         }
         
         .tabla-correos th {
             background-color: #f8f9fa;
-            font-weight: bold;
+            font-weight: 700;
+            color: #1a252f;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.8px;
+            border-bottom: 2px solid #1a252f;
         }
         
         .tabla-correos tr:hover {
-            background-color: #f1f1f1;
+            background-color: #f8f9fa;
         }
         
         .correo-leido {
             background-color: #f8f9fa;
+            color: #6c757d;
         }
         
         .correo-enviado {
@@ -96,87 +134,114 @@
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 1000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(26, 37, 47, 0.8);
         }
         
         .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 80%;
-            max-width: 800px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            background-color: #ffffff;
+            margin: 3% auto;
+            padding: 40px;
+            border-radius: 3px;
+            width: 85%;
+            max-width: 900px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
             position: relative;
+            border: 1px solid #e8e8e8;
+            border-top: 4px solid #1a252f;
         }
         
         .close {
-            color: #aaa;
+            color: #6c757d;
             position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 28px;
+            top: 15px;
+            right: 25px;
+            font-size: 32px;
             font-weight: bold;
             cursor: pointer;
+            transition: color 0.2s ease;
         }
         
         .close:hover,
         .close:focus {
-            color: black;
+            color: #1a252f;
             text-decoration: none;
         }
 
         .email-info {
-            margin: 20px 0;
+            margin: 25px 0;
         }
         
         .email-info p {
-            margin: 8px 0;
+            margin: 12px 0;
+            color: #333;
+            font-family: 'Arial', sans-serif;
         }
         
         .email-content {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-            min-height: 100px;
+            margin-top: 20px;
+            padding: 25px;
+            background-color: #f8f9fa;
+            border-radius: 3px;
+            min-height: 120px;
+            border-left: 4px solid #1a252f;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
         }
         
         .grupo-formulario {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .etiqueta-formulario {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1a252f;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-family: 'Arial', sans-serif;
         }
         
         .entrada-formulario {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 14px 16px;
+            border: 1px solid #d5d5d5;
+            border-radius: 2px;
             box-sizing: border-box;
+            font-size: 15px;
+            font-family: 'Arial', sans-serif;
+            background-color: #fafafa;
+            transition: all 0.2s ease;
+        }
+        
+        .entrada-formulario:focus {
+            outline: none;
+            border-color: #1a252f;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 2px rgba(26, 37, 47, 0.1);
         }
         
         .area-texto {
-            height: 200px;
+            height: 220px;
             resize: vertical;
+            line-height: 1.6;
         }
         
         .botones-accion {
-            margin-top: 20px;
+            margin-top: 30px;
             text-align: right;
+            padding-top: 20px;
+            border-top: 1px solid #e8e8e8;
         }
         
         .botones-accion .boton {
-            margin-left: 10px;
+            margin-left: 15px;
         }
     </style>
 </head>
@@ -206,9 +271,6 @@
         </table>
     </div>
 
-    <!-- Agregar después del div.contenedor-principal -->
-
-    <!-- Modal para ver correo -->
     <div id="modal-ver-correo" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -217,12 +279,11 @@
         </div>
     </div>
 
-    <!-- Modal para redactar/editar correo -->
-    <div id="modal-redactar" class="modal">
+        <div id="modal-redactar" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Redactar Correo</h2>
-            <form id="form-correo" onsubmit="return false;">
+            <form id="form-correo">
                 <input type="hidden" id="correo-id">
                 <div class="grupo-formulario">
                     <label class="etiqueta-formulario" for="destinatario">Para:</label>

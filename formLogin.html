@@ -7,15 +7,15 @@
     <script src="ajax.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body id="body">
-    <form id="formlogin" action="javascript:verificarsesion()" method="post" >
-        <label for="correo">Correo:</label>
-        <input type="email" id="correo" name="correo" required>
+<body id="body" class="body-login">
+    <form id="formlogin" class="form-login" action="javascript:verificarsesion()" method="post">
+        <label for="correo" class="label-login">Correo:</label>
+        <input type="email" id="correo" name="correo" class="input-login" required>
         <br><br>
-        <label for="password">Contraseña:</label>
-        <input type="password" id="password" name="password" required>
+        <label for="password" class="label-login">Contraseña:</label>
+        <input type="password" id="password" name="password" class="input-login" required>
         <br><br>
-        <input type="submit" value="Enviar">
+        <input type="submit" value="Enviar" class="button-login">
     </form>
 </body>
 </html>
