@@ -31,6 +31,44 @@ switch ($accion) {
         echo json_encode($correos);
         break;
 
+    case 'listar_borradores':
+        $id_usuario = $_SESSION['usuario']['id'];
+        $stmt = $con->prepare("SELECT c.*, u.email as destinatario_email FROM correos c 
+                             JOIN usuarios u ON c.destinatario_id = u.id 
+                             WHERE c.remitente_id=? AND c.estado='borrador' 
+                             AND c.eliminado_rem=0 ORDER BY c.fecha DESC");
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $correos = [];
+        while ($row = $result->fetch_assoc()) {
+            $correos[] = $row;
+        }
+        echo json_encode($correos);
+        break;
+
+    case 'enviar_borrador':
+        $data = json_decode(file_get_contents("php://input"));
+        $id_correo = $data->id;
+        
+        // Primero obtenemos los datos del borrador
+        $stmt = $con->prepare("SELECT * FROM correos WHERE id=? AND estado='borrador'");
+        $stmt->bind_param("i", $id_correo);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $borrador = $result->fetch_assoc();
+        
+        if ($borrador) {
+            // Actualizamos el estado del borrador a enviado
+            $stmt = $con->prepare("UPDATE correos SET estado='enviado' WHERE id=?");
+            $stmt->bind_param("i", $id_correo);
+            $stmt->execute();
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'mensaje' => 'Borrador no encontrado']);
+        }
+        break;
+
     case 'enviar':
         $data = json_decode(file_get_contents("php://input"));
         $remitente = $_SESSION['usuario']['id'];
@@ -41,6 +79,31 @@ switch ($accion) {
         $stmt = $con->prepare("INSERT INTO correos (remitente_id, destinatario_id, asunto, mensaje, estado, fecha) VALUES (?, ?, ?, ?, 'enviado', NOW())");
         $stmt->bind_param("iiss", $remitente, $destinatario_id, $asunto, $mensaje);
         $stmt->execute();
+        echo json_encode(['success' => true]);
+        break;
+
+    case 'enviar_masivo':
+        $data = json_decode(file_get_contents("php://input"));
+        $asunto = $data->asunto;
+        $mensaje = $data->mensaje;
+        $remitente = $_SESSION['usuario']['id'];
+
+        // Obtener todos los usuarios activos
+        $stmt = $con->prepare("SELECT id FROM usuarios WHERE estado='activo'");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $usuarios = [];
+        while ($row = $result->fetch_assoc()) {
+            $usuarios[] = $row['id'];
+        }
+
+        // Enviar correo a cada usuario
+        foreach ($usuarios as $destinatario_id) {
+            $stmt = $con->prepare("INSERT INTO correos (remitente_id, destinatario_id, asunto, mensaje, estado, fecha) VALUES (?, ?, ?, ?, 'enviado', NOW())");
+            $stmt->bind_param("iiss", $remitente, $destinatario_id, $asunto, $mensaje);
+            $stmt->execute();
+        }
+
         echo json_encode(['success' => true]);
         break;
 
@@ -70,6 +133,14 @@ switch ($accion) {
         echo json_encode(['success' => true]);
         break;
 
+    case 'marcar_leido':
+        $id_correo = $_GET['id'];
+        $stmt = $con->prepare("UPDATE correos SET estado='leido' WHERE id=?");
+        $stmt->bind_param("i", $id_correo);
+        $stmt->execute();
+        echo json_encode(['success' => true]);
+        break;
+
     case 'ver':
         $id_correo = $_GET['id'];
         $stmt = $con->prepare("SELECT * FROM correos WHERE id=?");
@@ -83,4 +154,4 @@ switch ($accion) {
         echo json_encode(['success' => false, 'mensaje' => 'Acción no válida']);
         break;
 }
-?>
+?>```

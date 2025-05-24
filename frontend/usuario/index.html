@@ -206,41 +206,41 @@
         </table>
     </div>
 
-    <div id="myModal" class="modal">
+    <!-- Agregar después del div.contenedor-principal -->
+
+    <!-- Modal para ver correo -->
+    <div id="modal-ver-correo" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2 id="titulo-modal">Título del Modal</h2>
-            <div id="contenido-modal">
-            </div>
+            <h2 id="modal-titulo"></h2>
+            <div id="modal-contenido" class="email-content"></div>
         </div>
     </div>
 
-    <div id="modalRedactar" class="modal">
+    <!-- Modal para redactar/editar correo -->
+    <div id="modal-redactar" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2 id="titulo-modal-redactar">Redactar Correo</h2>
-            <div id="contenido-modal-redactar">
-                <form id="formulario-redactar">
-                    <input type="hidden" id="redactar-id">
-                    <div class="grupo-formulario">
-                        <label for="redactar-destinatario" class="etiqueta-formulario">Para:</label>
-                        <input type="email" class="entrada-formulario" id="redactar-destinatario" required>
-                    </div>
-                    <div class="grupo-formulario">
-                        <label for="redactar-asunto" class="etiqueta-formulario">Asunto:</label>
-                        <input type="text" class="entrada-formulario" id="redactar-asunto" required>
-                    </div>
-                    <div class="grupo-formulario">
-                        <label for="redactar-contenido" class="etiqueta-formulario">Contenido:</label>
-                        <textarea class="entrada-formulario area-texto" id="redactar-contenido" required></textarea>
-                    </div>
-                    <div class="botones-accion">
-                        <button type="button" class="boton boton-inactivo" id="btn-cancelar-redactar">Cancelar</button>
-                        <button type="button" id="btn-guardar" class="boton" style="background-color: #ffc107;">Guardar Borrador</button>
-                        <button type="button" id="btn-enviar" class="boton boton-accion">Enviar</button>
-                    </div>
-                </form>
-            </div>
+            <h2>Redactar Correo</h2>
+            <form id="form-correo" onsubmit="return false;">
+                <input type="hidden" id="correo-id">
+                <div class="grupo-formulario">
+                    <label class="etiqueta-formulario" for="destinatario">Para:</label>
+                    <input type="email" id="destinatario" class="entrada-formulario" required>
+                </div>
+                <div class="grupo-formulario">
+                    <label class="etiqueta-formulario" for="asunto">Asunto:</label>
+                    <input type="text" id="asunto" class="entrada-formulario" required>
+                </div>
+                <div class="grupo-formulario">
+                    <label class="etiqueta-formulario" for="mensaje">Mensaje:</label>
+                    <textarea id="mensaje" class="entrada-formulario area-texto" required></textarea>
+                </div>
+                <div class="botones-accion">
+                    <button type="button" class="boton boton-inactivo" onclick="guardarBorrador()">Guardar como borrador</button>
+                    <button type="button" class="boton boton-accion" onclick="enviarCorreo()">Enviar</button>
+                </div>
+            </form>
         </div>
     </div>
 

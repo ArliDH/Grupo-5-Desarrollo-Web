@@ -1,4 +1,4 @@
- var myModal = document.getElementById("myModal");
+var myModal = document.getElementById("myModal");
         var modalRedactar = document.getElementById("modalRedactar");
         var btnEntrada = document.getElementById("btn-entrada");
         var btnSalida = document.getElementById("btn-salida");
@@ -110,22 +110,19 @@
         }
 
         function mostrarBandeja(correos, tipo) {
-            var tbody = tablaBandeja.getElementsByTagName('tbody')[0];
+            const tbody = tablaBandeja.getElementsByTagName('tbody')[0];
             tbody.innerHTML = '';
             
-            for (var i = 0; i < correos.length; i++) {
-                var correo = correos[i];
-                var fila = document.createElement('tr');
+            correos.forEach(correo => {
+                const fila = document.createElement('tr');
+                fila.setAttribute('data-correo-id', correo.id);
                 
-                if (tipo === 'entrada' && correo.leido) {
+                if (tipo === 'entrada' && correo.estado === 'leido') {
                     fila.classList.add('correo-leido');
-                }
-                if (tipo === 'salida' && correo.estado === 'enviado') {
-                    fila.classList.add('correo-enviado');
                 }
                 
                 fila.innerHTML = `
-                    <td>${tipo === 'entrada' ? correo.remitente : correo.destinatario}</td>
+                    <td>${tipo === 'entrada' ? correo.remitente_email : correo.destinatario_email}</td>
                     <td>${correo.asunto}</td>
                     <td>${correo.estado}</td>
                     <td>
@@ -135,7 +132,7 @@
                 `;
                 
                 tbody.appendChild(fila);
-            }
+            });
         }
 
         function mostrarBorradores(correos) {
@@ -259,10 +256,159 @@
                 });
         }
 
-        function mostrarRedactarModal() {
-            document.getElementById("formulario-redactar").reset();
-            document.getElementById("redactar-id").value = '';
-            modalRedactar.style.display = "block";
+      
+        
+        function mostrarRedactarModal(correoId = null) {
+            document.getElementById('form-correo').reset();
+            document.getElementById('correo-id').value = correoId;
+            document.getElementById('modal-redactar').style.display = 'block';
+            
+            if (correoId) {
+               
+                fetch(`../../backend/api/correos.php?accion=ver&id=${correoId}`)
+                    .then(response => response.json())
+                    .then(correo => {
+                        document.getElementById('destinatario').value = correo.destinatario_email;
+                        document.getElementById('asunto').value = correo.asunto;
+                        document.getElementById('mensaje').value = correo.mensaje;
+                    });
+            }
+        }
+        
+     
+        function guardarBorrador() {
+            const data = {
+                destinatario_email: document.getElementById('destinatario').value,
+                asunto: document.getElementById('asunto').value,
+                mensaje: document.getElementById('mensaje').value
+            };
+        
+            fetch('../../backend/api/correos.php?accion=guardar_borrador', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Borrador guardado correctamente');
+                    document.getElementById('modal-redactar').style.display = 'none';
+                    if (document.querySelector('#btn-borradores').classList.contains('boton-activo')) {
+                        cargarBorradores();
+                    }
+                } else {
+                    alert('Error al guardar el borrador: ' + result.mensaje);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al guardar el borrador');
+            });
+        }
+        
+        function enviarBorrador(id) {
+            if (!confirm('¿Desea enviar este borrador?')) return;
+        
+            fetch('../../backend/api/correos.php?accion=enviar_borrador', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: id })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Borrador enviado correctamente');
+                    cargarBorradores();
+                } else {
+                    alert('Error al enviar el borrador: ' + result.mensaje);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al enviar el borrador');
+            });
+        }
+        
+        // Actualizar la función marcarComoLeido
+        function marcarComoLeido(id) {
+            fetch(`../../backend/api/correos.php?accion=marcar_leido&id=${id}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        const fila = document.querySelector(`tr[data-correo-id="${id}"]`);
+                        if (fila) {
+                            fila.classList.add('correo-leido');
+                        }
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function enviarCorreo() {
+            const data = {
+                destinatario_email: document.getElementById('destinatario').value,
+                asunto: document.getElementById('asunto').value,
+                mensaje: document.getElementById('mensaje').value
+            };
+        
+            fetch('../../backend/api/correos.php?accion=enviar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Correo enviado correctamente');
+                    document.getElementById('modal-redactar').style.display = 'none';
+                    if (document.querySelector('#btn-salida').classList.contains('boton-activo')) {
+                        cargarBandejaSalida();
+                    }
+                } else {
+                    alert('Error al enviar el correo');
+                }
+            });
+        }
+        
+        function editarBorrador(id) {
+            mostrarRedactarModal(id);
+        }
+        
+        function enviarBorrador(id) {
+            if (confirm('¿Desea enviar este borrador?')) {
+                fetch(`../../backend/api/correos.php?accion=ver&id=${id}`)
+                    .then(response => response.json())
+                    .then(correo => {
+                        const data = {
+                            destinatario_email: correo.destinatario_email,
+                            asunto: correo.asunto,
+                            mensaje: correo.mensaje
+                        };
+                        return fetch('../../backend/api/correos.php?accion=enviar', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        });
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            alert('Borrador enviado correctamente');
+                            eliminarCorreo(id, 'borrador');
+                            cargarBorradores();
+                        } else {
+                            alert('Error al enviar el borrador');
+                        }
+                    });
+            }
         }
 
         window.onclick = function(event) {
