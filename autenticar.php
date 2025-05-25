@@ -1,39 +1,34 @@
-<?php session_start();
-
+<?php
+session_start();
+header('Content-Type: application/json');
 include("conexion.php");
 
-// Recibe los datos enviados por POST
 $email = $_POST['correo'] ?? '';
 $password = $_POST['password'] ?? '';
 
-$sql = "SELECT * FROM usuarios";
+// Consulta para buscar usuario con email y password
+$sql = "SELECT * FROM usuarios WHERE email = ? AND password = ?";
 
-$result = $con->query( $sql);
+$stmt = $con->prepare($sql);
+$stmt->bind_param("ss", $email, $password);
+$stmt->execute();
+$result = $stmt->get_result();
 
-$arreglo=[];
-
-while($row = $result->fetch_assoc()) {
-    $arreglo[] = [
-        'id' => $row['id'],
-        'rol' => $row['rol'],
+if ($user = $result->fetch_assoc()) {
+    // Usuario encontrado
+    $respuesta = [
+        'status' => 'success',
+        'message' => 'Usuario autenticado correctamente',
+        'id' => $user['id'],
+        'rol' => $user['rol']
     ];
-    if ($row['email'] == $email && $row['password'] == $password) {
-        $respuesta = [
-            'status' => 'success',
-            'message' => 'Usuario autenticado correctamente',
-            'id' => $row['id'],
-            'rol' => $row['rol'],
-        ];
-
-        echo json_encode($respuesta);
-
-        break;
-    }else {
-        $respuesta = [
-            'status' => 'error',
-            'message' => 'Usuario o contraseña incorrectos',
-        ];
-        echo json_encode($respuesta);
-    }
+    echo json_encode($respuesta);
+} else {
+    // Usuario no encontrado o credenciales incorrectas
+    $respuesta = [
+        'status' => 'error',
+        'message' => 'Usuario o contraseña incorrectos'
+    ];
+    echo json_encode($respuesta);
 }
 ?>

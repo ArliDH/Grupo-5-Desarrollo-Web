@@ -29,34 +29,36 @@ function verificarsesion() {
     const form = document.getElementById('formlogin');
     const formData = new FormData(form);
 
-    // Mostrar todos los datos del formulario en consola
-    //for (const [name, value] of formData.entries()) {
-    //console.log(name + ': ' + value);
-    //}
-
     fetch('autenticar.php', {
         method: 'POST',
         body: formData
     })
-        .then(response => response.json())
-        .then(datos => {
-            // Aquí procesas el JSON ya parseado
-            if (datos.status === 'success') {
-                alert(datos.message);
-                var rol = datos['rol'];
+    .then(response => {
+        console.log(response);
+        return response.json();
+    })
+    .then(datos => {
+        if (datos.status === 'success') {
 
-                console.log('Rol del usuario:', rol);
-                if (rol === 'admin') {
-                    cargarPagina('backend/api/admin.html');
-                } else {
-                    cargarContenido('../backend/api/usuario.php');
-                };
+             // Guardamos datos en localStorage
+            localStorage.setItem('userId', datos.id);
+            localStorage.setItem('userRol', datos.rol);
+            
+            alert(datos.message);
+            const rol = datos.rol;
+
+            if (rol === 'admin') {
+                window.location.href = 'frontend/admin/index.html';
             } else {
-                alert(datos.message);
+                window.location.href = 'frontend/usuario/index.html';
             }
-        })
-        .catch(error => console.error('Error:', error));
+        } else {
+            alert(datos.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
 }
+
 
 //pagina del administrador
 
@@ -103,10 +105,9 @@ function renderizarTablaAdmin(data) {
 }
 
 function updateAdmin(id) {
-    // Si tienes un formulario en la página para enviar, no es necesario obtenerlo si solo vas a pedir el form por AJAX
-    //const form = document.getElementById('formAdmin');
+   
     const formData = new FormData();
-    formData.append('id', id); // Agregar el ID al FormData
+    formData.append('id', id); 
 
     console.log("Id del admin a editar:", id);
 
@@ -114,10 +115,10 @@ function updateAdmin(id) {
         method: 'POST',
         body: formData
     })
-    .then(response => response.text()) // recibimos HTML del formulario
+    .then(response => response.text()) 
     .then(html => {
-        // Abrir el modal y cargar el formulario en el contenido del modal
-        abrirModal(html);  // función que abre el modal y coloca contenido, la definimos antes
+    
+        abrirModal(html);  
     })
     .catch(error => console.error('Error:', error));
 }
@@ -128,6 +129,5 @@ function abrirModal(contenidoHtml) {
     modalHeader.innerHTML = contenidoHtml;
     modal.style.display = 'flex';
 }
-
 
 

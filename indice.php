@@ -10,10 +10,10 @@
 </head>
 <body id="body">
     <div class="contenido" id="contenido">
-        <div>
+        <div id="link-login">
             <a href="javascript:cargarContenido('formLogin.html');">Iniciar Sesion</a>
         </div>
-        <div id="contenido_2">
+        <div class="contenido_2" id="contenido_2">
             <!--Contenido-->
         </div>
     </div>
